@@ -9,4 +9,6 @@ public interface MemberDao {
 
 	Member selectById(String id);
 
+	void insert(Member member);
+
 }

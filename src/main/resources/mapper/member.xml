@@ -6,7 +6,12 @@
 
 <mapper namespace="member.dao.MemberDao">
 
-	<select id="selectById" resultType="member.model.Member">
+	<select id="selectById" resultType="Member">
 		select * from member where member_id = #{id}
 	</select>
+	
+	<insert id="insert" parameterType="Member">
+		insert into member (member_id, name, password)
+		values (#{memberId}, #{name}, #{password})
+	</insert>
 </mapper>
