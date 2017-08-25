@@ -4,11 +4,13 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import javax.sql.DataSource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,18 +20,21 @@ import member.model.Member;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { AppConfiguration.class })
-@Sql({ "classpath:/preload_member.sql" })
-public class RegistServiceIntTest {
+public class RegistServiceInt_JdbcTemplate_Test {
+
+	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	private RegistService registService;
-
-	@Autowired
-	private MemberDao memberDao;
+	public void setDataSource(DataSource ds) {
+		jdbcTemplate = new JdbcTemplate(ds);
+	}
 
 	@Transactional
 	@Test
 	public void regist_Dup_Id() throws Exception {
+		jdbcTemplate.update("insert into member (member_id, name, password) values (?,?,?)", 
+				"madvirus", "최범균", "1234");
+
 		RegistRequest registRequest = new RegistRequest();
 		registRequest.setId("madvirus");
 		registRequest.setName("TDD");
@@ -57,4 +62,9 @@ public class RegistServiceIntTest {
 		Member mem = memberDao.selectById(registRequest.getId());
 		assertThat(mem, notNullValue());
 	}
+
+	@Autowired
+	private RegistService registService;
+	@Autowired
+	private MemberDao memberDao;
 }

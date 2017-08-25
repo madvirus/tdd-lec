@@ -8,11 +8,34 @@ import member.model.Member;
 
 @Service
 public class RegistService {
+	private PasswordMeter passwordMeter = new PasswordMeter();
 	private MemberDao memberDao;
+	
+	public void regist(RegistRequest registRequest) {
+		if (passwordMeter.meter(registRequest.getPassword()) == PasswordLevel.WEAK)
+			throw new WeakPasswordException();
+		
+		Member member = memberDao.selectById(registRequest.getId());
+		if (member != null)
+			throw new DuplicateIdException();
+		
+		memberDao.insert(member);
+	}
+
+	public void setMemberDao(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	}
+	
+	/*
+	private MemberDao memberDao;
+	private PasswordMeter passwordMeter;
 
 	public void regist(RegistRequest registRequest) {
+		PasswordLevel level = passwordMeter.meter(registRequest.getPassword());
+		if (level == PasswordLevel.WEAK) throw new WeakPasswordException();
+		
 		checkDuplicateId(registRequest.getId());
-		Member member = new Member(registRequest.getId(), 
+		Member member = new Member(registRequest.getId(),
 				registRequest.getName(), registRequest.getPassword());
 		memberDao.insert(member);
 	}
@@ -28,4 +51,9 @@ public class RegistService {
 		this.memberDao = memberDao;
 	}
 
+	@Autowired
+	public void setPasswordMeter(PasswordMeter passwordMeter) {
+		this.passwordMeter = passwordMeter;
+	}
+	*/
 }

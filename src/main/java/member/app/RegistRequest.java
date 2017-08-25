@@ -1,9 +1,15 @@
 package member.app;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class RegistRequest {
+	@NotEmpty
 	private String id;
+	@NotEmpty
 	private String name;
+	@NotEmpty
 	private String password;
+	@NotEmpty
 	private String passwordConfirm;
 
 	public String getId() {
@@ -36,6 +42,10 @@ public class RegistRequest {
 
 	public void setPasswordConfirm(String passwordConfirm) {
 		this.passwordConfirm = passwordConfirm;
+	}
+
+	public boolean matchPasswordAndConfirm() {
+		return password != null && password.equals(passwordConfirm);
 	}
 
 }
