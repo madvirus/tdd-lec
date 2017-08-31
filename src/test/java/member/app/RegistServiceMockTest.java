@@ -3,6 +3,7 @@ package member.app;
 import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 
@@ -16,6 +17,7 @@ import member.model.Member;
 public class RegistServiceMockTest {
 
 	private RegistService registService = new RegistService();
+	
 	private PasswordMeter passwordMeter = mock(PasswordMeter.class);
 	private MemberDao memberDao = mock(MemberDao.class);
 
@@ -24,13 +26,13 @@ public class RegistServiceMockTest {
 		registService.setPasswordMeter(passwordMeter);
 		registService.setMemberDao(memberDao);
 		given(passwordMeter.meter(Mockito.anyString())).willReturn(PasswordLevel.NORMAL);
+		
 	}
 
 	@Test
 	public void idIsDup_Then_DupIdEx_Should_Be_Thrown() {
 		// given: id가 dupid인 Member 존재
 		given(memberDao.selectById("dupid")).willReturn(new Member("dupid", "n", "p"));
-
 		// when: dupid로 회원 가입 신청하면
 		RegistRequest registRequest = new RegistRequest();
 		registRequest.setId("dupid");
